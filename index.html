@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Манеж ФК «Актобе» · 75×115 м — концепция в 3D</title>
+<meta name="description" content="Крытый тренировочный манеж 78×120 м для ФК «Актобе»: 4 конструктивных решения в 3D-анатомии, смета от единичных расценок, стоимость владения за 25 лет, генплан и график.">
+<meta name="theme-color" content="#070c16">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="canonical" href="%SITE_URL%/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="ФК «Актобе» · Манеж">
+<meta property="og:title" content="Крытый манеж ФК «Актобе» 75×115 м — анатомия в 3D">
+<meta property="og:description" content="4 конструктивных решения, смета 3,2–4,2 млрд ₸, стоимость владения за 25 лет. Листайте — здание разбирается на слои.">
+<meta property="og:url" content="%SITE_URL%/">
+<meta property="og:image" content="%SITE_URL%/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="3D-модель манежа ФК «Актобе», разобранная на слои">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Крытый манеж ФК «Актобе» 75×115 м — анатомия в 3D">
+<meta name="twitter:description" content="4 решения, смета, TCO за 25 лет, генплан и график.">
+<meta name="twitter:image" content="%SITE_URL%/og.png">
+<link rel="preload" href="/assets/fonts/unbounded-cyrillic-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="modulepreload" href="/assets/vendor/three.module.min.js">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script type="importmap">{"imports":{"three":"/assets/vendor/three.module.min.js"}}</script>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><i id="pbar"></i></div>
+
+<nav class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="В начало">
+    <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><path d="M16 2 28 7v9c0 7-5.2 12.2-12 14C9.2 28.2 4 23 4 16V7z" fill="#e3192b"/><path d="M16 5.2 25 9v7c0 5.4-3.8 9.6-9 11.2-5.2-1.6-9-5.8-9-11.2V9z" fill="none" stroke="#fff" stroke-width="1.4"/><path d="M11 21 16 9l5 12h-2.6l-1-2.6h-2.8l-1 2.6zm4.2-4.6h1.6L16 14.2z" fill="#fff"/></svg>
+    <span>ФК <b>«АКТОБЕ»</b><small>манеж 75×115</small></span>
+  </a>
+  <div class="links" id="links">
+    <a href="#task">Задача</a><a href="#variants">3D</a><a href="#compare">Сравнение</a><a href="#estimate">Смета</a><a href="#site">Генплан</a><a href="#design">Дизайн</a><a href="#time">Сроки</a><a href="#reco">Итог</a>
+  </div>
+</nav>
+
+<!-- ===================== СКРОЛЛ-ИСТОРИЯ: АНАТОМИЯ ===================== -->
+<section class="story" id="top" aria-label="Анатомия манежа">
+  <div class="pin" id="storyPin">
+    <div class="poster" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <div class="ch ch-hero" data-a="0" data-b="0.11">
+      <div class="tag">Концепция · ноябрь 2026</div>
+      <h1>Крытый манеж<br><span>75 × 115</span> м</h1>
+      <p class="lead">Круглогодичное полноразмерное поле для ФК «Актобе». Листайте — здание разберётся на слои: оболочка, каркас, поле, фундамент.</p>
+      <div class="chips">
+        <div class="chip"><b data-k="pitch">8 625 м²</b><small>игровая площадка</small></div>
+        <div class="chip"><b>68 × 105</b><small>поле FIFA/UEFA</small></div>
+        <div class="chip"><b data-k="clear">≥ 12 м</b><small>в свету над бровкой</small></div>
+        <div class="chip"><b data-k="range">—</b><small>4 варианта под ключ</small></div>
+      </div>
+    </div>
+
+    <div class="ch ch-side" data-a="0.13" data-b="0.27">
+      <div class="num">01</div>
+      <div class="tag">Оболочка</div>
+      <h2>+12 °C в поле<br>при −31 °C снаружи</h2>
+      <p>Утеплённая оболочка — главный вопрос климата Актобе. Расчётные теплопотери зала — от <b data-k="peakMin">—</b> до <b data-k="peakMax">—</b> кВт в зависимости от варианта.</p>
+    </div>
+
+    <div class="ch ch-side right" data-a="0.29" data-b="0.43">
+      <div class="num">02</div>
+      <div class="tag">Каркас</div>
+      <h2>78 м пролёта<br>без единой опоры</h2>
+      <p>21 рама с шагом 6 м. Высота каркаса подобрана так, чтобы в свету над бровкой поля оставалось не меньше 12 м — навесы и длинные передачи не задевают конструкцию.</p>
+    </div>
+
+    <div class="ch ch-side" data-a="0.45" data-b="0.61">
+      <div class="num">03</div>
+      <div class="tag">Поле в разрезе</div>
+      <h2>Четыре слоя<br>под ногами игрока</h2>
+      <ol class="layers">
+        <li><b>60 мм</b> газон FIFA Quality Pro</li>
+        <li><b>12 мм</b> амортизирующий shock-pad</li>
+        <li><b>300 мм</b> щебёночное основание + дренаж</li>
+        <li><b>42</b> фундамента под рамы + ростверк</li>
+      </ol>
+    </div>
+
+    <div class="ch ch-side right" data-a="0.71" data-b="0.81">
+      <div class="num">04</div>
+      <div class="tag">Внутри</div>
+      <h2>Красные фермы<br>на белом</h2>
+      <p>LED-линии вдоль поля без слепящих точек для вратарей, защитные сетки за воротами, камеры на фермах для видеоразбора.</p>
+    </div>
+
+    <div class="ch ch-var" data-a="0.83" data-b="1.01">
+      <div class="num">05</div>
+      <div class="tag">Четыре решения</div>
+      <h2 id="svName">—</h2>
+      <p id="svType" class="muted">—</p>
+      <div class="svrow"><div><small>CAPEX под ключ</small><b id="svCap">—</b></div><div><small>владение 25 лет</small><b id="svTco">—</b></div></div>
+      <div class="svdots" id="svDots"></div>
+    </div>
+
+    <div class="rail" aria-hidden="true"><i id="rail"></i></div>
+    <div class="cue" id="cue" aria-hidden="true"><span></span>листайте</div>
+  </div>
+</section>
+
+<main>
+<!-- ===================== 01 ЗАДАЧА ===================== -->
+<section class="sec" id="task">
+  <div class="tag">01 · Задача</div>
+  <h2 class="rv">Что строим и почему именно так</h2>
+  <p class="sub rv">Поле 68×105 м с зонами безопасности 3,5 м по бровкам и 5 м за воротами — это площадка 75×115 м. Над ней — пролёт 78 м без опор и высота в свету над бровкой не меньше 12 м.</p>
+  <div class="grid g4 mt">
+    <div class="card kpi rv"><b>78 × 120 м</b><small>габариты зала · 9 360 м²</small></div>
+    <div class="card kpi rv"><b>≥ 12 м</b><small>в свету над бровкой — проверено расчётом для всех 4 вариантов</small></div>
+    <div class="card kpi rv"><b>500–750 лк</b><small>освещённость: тренировка / игра</small></div>
+    <div class="card kpi rv"><b>+10…+14 °C</b><small>в зоне поля зимой</small></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card rv">
+      <h3>Климат Актобе диктует конструкцию</h3>
+      <p class="muted">Расчётная температура −31 °C, сильный ветер и метели, отопительный период ≈ 198 суток со средней −6,2 °C. Поэтому во всех вариантах — утеплённая оболочка, газовое воздушное отопление, приток с рекуперацией 75 % и дестратификаторы под кровлей. Нагрузки — по СП РК EN 1991 для Актюбинской области; сейсмичность уточняется изысканиями.</p>
+      <h3 class="mt">Состав комплекса</h3>
+      <p class="muted">Зал с полем · АБК 1 200 м² (4 командные и 2 судейские раздевалки, душевые, медблок и восстановление, тренерская, видеозал, тренажёрный зал, прачечная, кафе) · парковка 80 мест + 4 автобуса · техдвор (ТП, ГРПШ).</p>
+    </div>
+    <div class="card rv">
+      <h3>Поперечный разрез: 4 профиля на одной оси</h3>
+      <div id="xsec"></div>
+      <div class="legend" id="xleg"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 КОНФИГУРАТОР ===================== -->
+<section class="sec" id="variants">
+  <div class="tag">02 · Варианты в 3D</div>
+  <h2 class="rv">Анатомия конструкции</h2>
+  <p class="sub rv">Выберите вариант и сдвиньте «Анатомию» — здание разложится на слои. Чтобы покрутить модель пальцем, нажмите «Вращать 3D»: страница при этом не прокручивается, «Готово» возвращает скролл.</p>
+  <div class="vtabs mt" id="vtabs" role="tablist"></div>
+  <div class="vwrap">
+    <div class="viewer" id="viewer">
+      <div class="err" id="err3d">3D-просмотр не запустился в этом браузере. Все данные ниже доступны.</div>
+      <button class="live-btn" id="liveBtn" type="button"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m17 2 4 1-1 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Вращать 3D</span></button>
+      <div class="vctl">
+        <label for="explode">Анатомия</label>
+        <input type="range" id="explode" min="0" max="100" value="0">
+        <div class="vbtns">
+          <button class="vbtn" data-view="ext" type="button">Снаружи</button>
+          <button class="vbtn" data-view="in" type="button">Изнутри</button>
+          <button class="vbtn" data-view="top" type="button">Сверху</button>
+          <button class="vbtn" id="xray" type="button">X-ray</button>
+        </div>
+      </div>
+    </div>
+    <div class="card spec" id="spec"></div>
+  </div>
+</section>
+
+<!-- ===================== 03 СРАВНЕНИЕ ===================== -->
+<section class="sec" id="compare">
+  <div class="tag">03 · Сравнение</div>
+  <h2 class="rv">Цена постройки vs цена владения</h2>
+  <p class="sub rv">Дешевле построить — не значит дешевле содержать. Мембрану меняют через 15–20 лет, у неё выше теплопотери и инфильтрация. Поэтому сравниваем и CAPEX, и стоимость владения за 25 лет.</p>
+  <div class="card mt scroll rv"><table class="tbl cmp" id="ctbl"></table></div>
+  <div class="grid g2 mt">
+    <div class="card bars rv"><h3>CAPEX под ключ, млрд ₸</h3><div id="bars1"></div><div class="legend" id="leg1"></div></div>
+    <div class="card bars rv"><h3>Стоимость владения за 25 лет, млрд ₸</h3><div id="bars2"></div><div class="legend"><span><i style="background:#e3192b"></i>CAPEX</span><span><i style="background:#7dd3fc"></i>эксплуатация 25 лет</span></div></div>
+  </div>
+  <div class="card mt rv">
+    <h3>Эксплуатация в год, млн ₸</h3>
+    <div class="scroll"><table class="tbl" id="otbl"></table></div>
+    <p class="muted small mt-s">Без ФОТ персонала (одинаков для всех). Тепло: теплопотери через оболочку + инфильтрация + приток с рекуперацией, градусо-сутки Актобе, учёт теплопоступлений и ночного режима. Свет: 95 кВт × 14 ч × 330 дн, минус экономия от естественного света.</p>
+  </div>
+</section>
+
+<!-- ===================== 04 СМЕТА ===================== -->
+<section class="sec" id="estimate">
+  <div class="tag">04 · Смета</div>
+  <h2 class="rv">Детализация стоимости</h2>
+  <p class="sub rv">Объёмы посчитаны из геометрии профиля (площади оболочки, тоннаж, объём зала), стоимость — объём × единичная расценка. Цены ноября 2026 без НДС, точность ±15–20 % до проекта. Включайте опции — итог пересчитается.</p>
+  <div class="seg mt" id="eseg"></div>
+  <div class="grid est mt">
+    <div class="card scroll"><table class="tbl" id="etbl"></table></div>
+    <div class="stick">
+      <div class="card total-card">
+        <div class="muted small">Итого с резервом 5 %</div>
+        <div class="total" id="etot"></div>
+        <div class="muted" id="eusd"></div>
+        <div class="muted small" id="em2"></div>
+      </div>
+      <div class="card mt"><h3>Опции</h3><div id="eopts"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 ГЕНПЛАН ===================== -->
+<section class="sec" id="site">
+  <div class="tag">05 · Генплан</div>
+  <h2 class="rv">Участок и благоустройство</h2>
+  <p class="sub rv">Типовая схема на участке ≈ 4,1 га (180×226 м). Участок пока не определён — после выбора схема привязывается к рельефу, сетям и подъездам.</p>
+  <div class="grid g2 mt site">
+    <div class="card rv" id="plan"></div>
+    <div class="card rv">
+      <h3>ТЭП</h3>
+      <table class="tbl" id="tep"></table>
+      <p class="muted small mt">Пожарный проезд 6 м вокруг зала, отдельные входы: команды и персонал — через АБК, гости и родители — с площади. Техдвор с ТП и газорегуляторным пунктом — у тыльного торца.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 06 ДИЗАЙН ===================== -->
+<section class="sec" id="design">
+  <div class="tag">06 · Дизайн</div>
+  <h2 class="rv">Образ: красно-белый клубный код</h2>
+  <div class="grid g3 mt">
+    <div class="card rv">
+      <h3>Палитра</h3>
+      <div class="pal"><span style="background:#e3192b">Клубный красный</span><span style="background:#f2f2ee;color:#111">Белый</span><span style="background:#2d3138">Графит</span></div>
+      <p class="muted">Графитовый цоколь скрывает следы мячей и грязи, красная полоса по периметру читается с трассы, белый верх отражает свет и облегчает объём.</p>
+    </div>
+    <div class="card rv">
+      <h3>Интерьер</h3>
+      <p class="muted">Красные фермы на белом потолке, защитные сетки за воротами и вдоль торцов, мягкая защита колонн на 2 м, LED-линии вдоль поля, акустические панели на торцах. Крупная надпись клуба на торце, история клуба — на стене галереи АБК.</p>
+      <button class="vbtn mt" id="goInside" type="button">Открыть вид изнутри в 3D →</button>
+    </div>
+    <div class="card rv">
+      <h3>Для игроков и тренеров</h3>
+      <p class="muted">Видеокамеры на фермах, табло-таймер, зона разминки с резиновым покрытием вдоль бровки, галерея для тренеров и скаутов на 2 этаже АБК с видом на поле, тёплые полы в раздевалках.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 07 СРОКИ ===================== -->
+<section class="sec" id="time">
+  <div class="tag">07 · Сроки</div>
+  <h2 class="rv">График от старта до ввода</h2>
+  <p class="sub rv">Месяцы от подписания договора; проект и экспертиза — голубым, стройка — красным. Производство каркаса идёт параллельно экспертизе.</p>
+  <div class="seg mt" id="gseg"></div>
+  <div class="card mt"><div class="gantt" id="gantt"></div></div>
+</section>
+
+<!-- ===================== 08 ИТОГ ===================== -->
+<section class="sec" id="reco">
+  <div class="tag">08 · Итог</div>
+  <h2 class="rv">Рекомендация</h2>
+  <div class="grid g2 mt">
+    <div class="card reco rv" id="recoCard"></div>
+    <div class="card rv">
+      <h3>Следующие шаги</h3>
+      <ol class="steps">
+        <li>Выбор участка, топосъёмка и инженерная геология</li>
+        <li>Технические условия: электроснабжение ≈ 1 МВт, газ, вода, канализация</li>
+        <li>Эскизный проект выбранного варианта + визуализация с брендингом клуба</li>
+        <li>Уточнённая смета по ценам поставщиков: металл, газон, свет, отопление</li>
+        <li>Рабочий проект, экспертиза, разрешение на строительство</li>
+        <li>Договор генподряда и график поставок</li>
+      </ol>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div><b>ФК «Актобе» · Тренировочный манеж 75×115 м</b><br>Концепция, ноябрь 2026</div>
+    <div class="muted small" id="assump"></div>
+  </div>
+</footer>
+
+<script type="module" src="/assets/js/app.js"></script>
+</body>
+</html>
