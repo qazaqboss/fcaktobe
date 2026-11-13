@@ -253,6 +253,7 @@ addEventListener('scroll', req, { passive: true });
 addEventListener('resize', req, { passive: true });
 
 onVariant(BEST);
+document.documentElement.classList.add('ready');
 updateChapters(0);
 
 /* ---------- 3D ---------- */

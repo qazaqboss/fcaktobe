@@ -4,7 +4,7 @@
    Тач-скролл никогда не блокируется: в истории канвас без событий,
    в конфигураторе вращение включается только кнопкой «Вращать 3D».
    ===================================================================== */
-import * as THREE from 'three';
+import * as THREE from '../vendor/three.module.min.js';
 import { OrbitControls } from '../vendor/OrbitControls.js';
 import { V, W, L, R, FRAMES, STEP, INS, basePts, hAt, subdiv, inward } from './model.js';
 
