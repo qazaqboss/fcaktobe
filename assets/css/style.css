@@ -232,3 +232,4 @@ svg text{font-family:Manrope}
 .foot{border-top:1px solid var(--line);margin-top:80px;background:var(--bg2)}
 .foot-in{max-width:var(--max);margin:auto;padding:28px var(--pad) calc(40px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 2fr;gap:24px;font-size:14px}
 @media(max-width:800px){.foot-in{grid-template-columns:1fr}}
+.links a.pres-link{color:#fff;background:var(--red)}
