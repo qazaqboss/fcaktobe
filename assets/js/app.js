@@ -1,24 +1,30 @@
 import {
-  V, ALL, calc, COMMON, COMMON_SUM, OPTS, OPEXN, RES, RATE, HALL, PITCH_AREA, TOUCH_X, CLEAR_MIN, CLIMATE, TARIFF, PRICE,
-  basePts, innerPts, bn, mn, usd, fmtInt, dec
+  V, ALL, calc, COMMON_Q, HALL, PITCH_AREA, TOUCH_X, CLEAR_MIN, CLIMATE, basePts, innerPts, fmtInt, dec
 } from './model.js';
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const R0 = ALL();
 const byId = id => R0.find(r => r.v.id === id);
-const caps = R0.map(r => r.capex), tcos = R0.map(r => r.tco25), ops = R0.map(r => r.opY);
-const minC = Math.min(...caps), minT = Math.min(...tcos), minO = Math.min(...ops);
-const ranked = [...R0].sort((a, b) => a.tco25 - b.tco25);
-const BEST = ranked[0].v.id, ALT = ranked[1].v.id;
+const peaks = R0.map(r => r.e.peakKW), minP = Math.min(...peaks);
+const fastest = Math.min(...R0.map(r => r.v.months));
+// рекомендация по проектным критериям: капитальность + энергоэффективность, при равенстве — меньшие теплопотери
+const ranked = [...R0].sort((a, b) => (b.v.rate.capital + b.v.rate.energy) - (a.v.rate.capital + a.v.rate.energy) || a.e.peakKW - b.e.peakKW);
+const BEST = ranked[0].v.id, ALT = 'hyb';
+const m1 = n => dec(n, n % 1 ? 1 : 0);
 const ss = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
-const bn1 = m => (m / 1000).toFixed(1).replace('.', ',');
 const XC = Object.fromEntries(V.map(v => [v.id, v.color]));
+
+const G = {
+  tent: [['Изыскания, проект, экспертиза', 0, 3, 1], ['Производство каркаса и мембраны', 2, 3], ['Фундаменты', 3, 1.5], ['Монтаж каркаса', 4.5, 1.5], ['Монтаж оболочки', 5.5, 1.5], ['Инженерные системы', 5.5, 2], ['Поле: основание + газон', 6.5, 1.5], ['АБК и благоустройство', 3.5, 4.5], ['Пусконаладка, ввод', 8, 1]],
+  box: [['Изыскания, проект, экспертиза', 0, 3, 1], ['Производство каркаса', 2, 4], ['Фундаменты', 3, 2.5], ['Монтаж каркаса и ферм', 5, 3], ['Кровля и стены PIR', 7, 2.5], ['Инженерные системы', 7.5, 3], ['Поле: основание + газон', 9.5, 1.5], ['АБК и благоустройство', 3.5, 7], ['Пусконаладка, ввод', 11, 1]],
+  hyb: [['Изыскания, проект, экспертиза', 0, 3, 1], ['Производство каркаса и мембраны', 2, 3.5], ['Фундаменты', 3, 2], ['Монтаж каркаса', 4.5, 2.5], ['Стены PIR + мембранная кровля', 6.5, 2], ['Инженерные системы', 6.5, 2.5], ['Поле: основание + газон', 8, 1.5], ['АБК и благоустройство', 3.5, 6], ['Пусконаладка, ввод', 9.5, 1]],
+  wood: [['Изыскания, проект, экспертиза', 0, 3.5, 1], ['Производство и доставка клеёных арок', 2, 5], ['Фундаменты', 3.5, 2.5], ['Монтаж арок', 7, 3], ['Кровля и фасады', 9, 3], ['Инженерные системы', 9, 3.5], ['Поле: основание + газон', 12, 1.5], ['АБК и благоустройство', 4, 9], ['Пусконаладка, ввод', 13.5, 1]]
+};
 
 /* ---------- hero numbers ---------- */
 const setK = (k, t) => $$(`[data-k="${k}"]`).forEach(e => e.textContent = t);
 setK('pitch', fmtInt(PITCH_AREA) + ' м²');
-setK('range', `${bn1(minC)}–${bn1(Math.max(...caps))} млрд ₸`);
 setK('peakMin', fmtInt(Math.min(...R0.map(r => r.e.peakKW))));
 setK('peakMax', fmtInt(Math.max(...R0.map(r => r.e.peakKW))));
 
@@ -42,7 +48,7 @@ function updateChapters(p) {
     lastSv = i; const r = R0[i];
     $('#svName').innerHTML = `<span style="color:${i === 1 ? '#ff5262' : XC[r.v.id]}">${r.v.code}</span> · ${r.v.name}`;
     $('#svType').textContent = r.v.type + ' · ' + r.v.tag;
-    $('#svCap').textContent = bn(r.capex); $('#svTco').textContent = bn(r.tco25);
+    $('#svCap').textContent = `${m1(r.v.geo.H)} / ${m1(r.v.geo.h0)} м`; $('#svTco').textContent = `${fmtInt(r.e.peakKW)} кВт`; $('#svTerm').textContent = `${m1(r.v.months)} мес`;
     $$('#svDots span').forEach((s, k) => s.classList.toggle('on', k === i));
   }
   $('#rail').style.transform = `scaleY(${p.toFixed(4)})`;
@@ -78,7 +84,7 @@ function renderX() {
 const vt = $('#vtabs');
 V.forEach(v => {
   const b = document.createElement('button'); b.className = 'vtab'; b.type = 'button'; b.dataset.id = v.id; b.setAttribute('role', 'tab');
-  b.innerHTML = `<i>${v.code}</i>${v.name}<small>${bn(byId(v.id).capex)}</small>`;
+  b.innerHTML = `<i>${v.code}</i>${v.name}<small>${v.tag}</small>`;
   b.onclick = () => onVariant(v.id); vt.appendChild(b);
 });
 function renderSpec() {
@@ -96,7 +102,7 @@ function renderSpec() {
   $('#spec').innerHTML = `<div class="code">ВАРИАНТ ${v.code} · ${v.tag}${v.id === BEST ? ' · <span style="color:#4ade80">рекомендуем</span>' : ''}</div><h3>${v.name}</h3><div class="type">${v.type}</div>
   <dl>${dl.map(d => `<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join('')}</dl>
   <div class="pc"><div class="p"><h4>Плюсы</h4><ul>${v.pros.map(x => `<li>${x}</li>`).join('')}</ul></div><div class="c"><h4>Минусы</h4><ul>${v.cons.map(x => `<li>${x}</li>`).join('')}</ul></div></div>
-  <div class="capex"><div class="muted small">CAPEX под ключ (с АБК, полем, сетями)</div><b>${bn(r.capex)}</b> <span class="muted">≈ ${usd(r.capex)}</span><div class="muted small">${fmtInt(r.perM2)} тыс. ₸ на м² зала · эксплуатация ≈ ${mn(r.opY)}/год</div></div>`;
+  <div class="capex"><div class="muted small">Ключевое</div><b>${fmtInt(e.peakKW)} кВт</b> <span class="muted">теплопотери</span><div class="muted small">${fmtInt(g.envA)} м² оболочки · ${fmtInt(g.vol / 1000)} тыс. м³ · ${m1(v.months)} мес с проектом</div></div>`;
 }
 let ENGINE = null;
 function onVariant(id) {
@@ -110,62 +116,39 @@ function dots(n) { return '●'.repeat(n) + '<i>' + '●'.repeat(5 - n) + '</i>'
   const row = (n, f) => `<tr><td>${n}</td>${R0.map((r, i) => `<td>${f(r, i)}</td>`).join('')}</tr>`;
   let h = `<tr><th></th>${V.map(v => `<th><span style="color:#ff5262">${v.code}</span> ${v.name}</th>`).join('')}</tr>`;
   h += row('Конструкция', r => r.v.type);
+  h += row('Каркас', r => r.v.id === 'wood' ? `${fmtInt(r.g.glulam)} м³ клеёного бруса` : `${fmtInt(r.g.steelT)} т стали`);
   h += row('Конёк / стены', r => `${dec(r.v.geo.H, r.v.geo.H % 1 ? 1 : 0)} / ${dec(r.v.geo.h0, r.v.geo.h0 % 1 ? 1 : 0)} м`);
   h += row('В свету над бровкой', r => `<span class="ok">${dec(r.g.clear, 1)} м ✓</span>`);
   h += row('Оболочка / объём', r => `${fmtInt(r.g.envA)} м²<br><span class="muted">${fmtInt(r.g.vol / 1000)} тыс. м³</span>`);
-  h += row('Теплопотери (пик)', r => `${fmtInt(r.e.peakKW)} кВт`);
-  h += row('Срок (с проектом)', r => `${dec(r.v.months, r.v.months % 1 ? 1 : 0)} мес`);
-  h += row('CAPEX', (r, i) => `<span class="${caps[i] === minC ? 'best' : ''}">${bn(caps[i])}</span><br><span class="muted">${usd(caps[i])} · ${fmtInt(r.perM2)} тыс./м²</span>`);
-  h += row('Эксплуатация / год', (r, i) => `<span class="${ops[i] === minO ? 'best' : ''}">${mn(ops[i])}</span>`);
-  h += row('Владение 25 лет', (r, i) => `<span class="${tcos[i] === minT ? 'best' : ''}">${bn(tcos[i])}</span>`);
-  [['Цена', 'price'], ['Скорость', 'speed'], ['Капитальность', 'capital'], ['Энергоэффективность', 'energy'], ['Имидж', 'image']]
+  h += row('Теплопотери (пик)', r => `<span class="${r.e.peakKW === minP ? 'best' : ''}">${fmtInt(r.e.peakKW)} кВт</span>`);
+  h += row('Срок (с проектом)', r => `<span class="${r.v.months === fastest ? 'best' : ''}">${m1(r.v.months)} мес</span>`);
+  h += row('Теплопотери / год', r => `<span class="${r.e.peakKW === minP ? 'best' : ''}">${fmtInt(r.e.heatMWh)} МВт·ч</span>`);
+  h += row('Ресурс', r => r.v.life);
+  [['Скорость', 'speed'], ['Капитальность', 'capital'], ['Энергоэффективность', 'energy'], ['Образ', 'image']]
     .forEach(([n, k]) => h += row(n, r => `<span class="dots">${dots(r.v.rate[k])}</span>`));
   $('#ctbl').innerHTML = h;
 
-  const fieldSum = COMMON[2][1] + COMMON[3][1] + COMMON[4][1];
-  const cats = [
-    ['Каркас, фундаменты, оболочка', '#e3192b', r => r.spec.filter(s => s.k !== 'hvac').reduce((a, s) => a + s.m, 0)],
-    ['Отопление и вентиляция', '#fb923c', r => r.spec.find(s => s.k === 'hvac').m],
-    ['Поле, свет, спорт', '#4ade80', () => fieldSum],
-    ['АБК, сети, благоустройство, проект', '#7dd3fc', () => COMMON_SUM - fieldSum],
-    ['Резерв 5 %', '#64748b', r => r.reserve]
-  ];
-  const mx = Math.max(...caps);
-  $('#bars1').innerHTML = R0.map((r, i) => `<div class="row"><div><b style="color:#ff5262">${r.v.code}</b> ${r.v.name}</div><div class="track">${cats.map(c => `<span style="width:${c[2](r) / mx * 100}%;background:${c[1]}" title="${c[0]}"></span>`).join('')}</div><div class="v">${(caps[i] / 1000).toFixed(2).replace('.', ',')}</div></div>`).join('');
-  $('#leg1').innerHTML = cats.map(c => `<span><i style="background:${c[1]}"></i>${c[0]}</span>`).join('');
-  const mt = Math.max(...tcos);
-  $('#bars2').innerHTML = R0.map((r, i) => `<div class="row"><div><b style="color:#ff5262">${r.v.code}</b> ${r.v.name}</div><div class="track"><span style="width:${caps[i] / mt * 100}%;background:#e3192b"></span><span style="width:${(tcos[i] - caps[i]) / mt * 100}%;background:#7dd3fc"></span></div><div class="v">${(tcos[i] / 1000).toFixed(2).replace('.', ',')}${tcos[i] === minT ? ' ✓' : ''}</div></div>`).join('');
-
-  let o = `<tr><th>Статья</th>${V.map(v => `<th class="n"><span style="color:#ff5262">${v.code}</span></th>`).join('')}</tr>`;
-  OPEXN.forEach((n, k) => o += `<tr><td>${n}</td>${R0.map(r => `<td class="n">${r.op[k] < 0.05 ? '—' : dec(r.op[k], 1)}</td>`).join('')}</tr>`);
-  o += `<tr><td class="muted small">Электроэнергия, МВт·ч / газ, тыс. м³</td>${R0.map(r => `<td class="n muted small">${fmtInt(r.e.elecMWh)} / ${fmtInt(r.e.gasM3 / 1000)}</td>`).join('')}</tr>`;
-  o += `<tr class="tot"><td>Итого в год</td>${R0.map((r, i) => `<td class="n ${ops[i] === minO ? 'best' : ''}">${dec(r.opY, 1)}</td>`).join('')}</tr>`;
+  const mp = Math.max(...peaks);
+  $('#bars1').innerHTML = R0.map(r => `<div class="row"><div><b style="color:#ff5262">${r.v.code}</b> ${r.v.name}</div><div class="track">${[['skin', '#e3192b'], ['infil', '#fb923c'], ['other', '#7dd3fc']].map(([k, c]) => `<span style="width:${r.e.kw[k] / mp * 100}%;background:${c}"></span>`).join('')}</div><div class="v">${fmtInt(r.e.peakKW)}${r.e.peakKW === minP ? ' ✓' : ''}</div></div>`).join('');
+  const mm = 15;
+  $('#bars2').innerHTML = R0.map(r => { const d = G[r.v.id][0][2]; return `<div class="row"><div><b style="color:#ff5262">${r.v.code}</b> ${r.v.name}</div><div class="track"><span style="width:${d / mm * 100}%;background:#3b82f6"></span><span style="width:${(r.v.months - d) / mm * 100}%;background:#e3192b"></span></div><div class="v">${m1(r.v.months)}${r.v.months === fastest ? ' ✓' : ''}</div></div>`; }).join('');
+  let o = `<tr><th></th>${V.map(v => `<th class="n"><span style="color:#ff5262">${v.code}</span> ${v.name}</th>`).join('')}</tr>`;
+  o += `<tr><td>Тепло на отопление, МВт·ч</td>${R0.map(r => `<td class="n">${fmtInt(r.e.heatMWh)}</td>`).join('')}</tr>`;
+  o += `<tr><td>Газ, тыс. м³</td>${R0.map(r => `<td class="n">${fmtInt(r.e.gasM3 / 1000)}</td>`).join('')}</tr>`;
+  o += `<tr><td>Электроэнергия, МВт·ч</td>${R0.map(r => `<td class="n">${fmtInt(r.e.elecMWh)}</td>`).join('')}</tr>`;
+  o += `<tr><td>Естественный свет</td>${R0.map(r => `<td class="n">${r.v.daylight ? '−' + Math.round(r.v.daylight * 100) + ' % на освещение' : '—'}</td>`).join('')}</tr>`;
+  o += `<tr><td>Замена мембраны</td>${R0.map(r => `<td class="n">${r.v.id === 'tent' ? 'вся оболочка, 15–20 лет' : r.v.id === 'hyb' ? 'кровля, 15–20 лет' : 'не требуется'}</td>`).join('')}</tr>`;
   $('#otbl').innerHTML = o;
 })();
 
-/* ---------- 04 estimate ---------- */
-let ev = BEST; const eo = new Set();
-const es = $('#eseg');
+/* ---------- 04 quantities ---------- */
+let ev = BEST; const es = $('#eseg');
 V.forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.textContent = v.code + ' · ' + v.name; b.dataset.id = v.id; b.onclick = () => { ev = v.id; renderE(); }; es.appendChild(b); });
-$('#eopts').innerHTML = OPTS.map(o => `<label class="opt"><input type="checkbox" data-o="${o.id}"><span>${o.name}</span><span class="n" id="on_${o.id}"></span></label>`).join('');
-$$('#eopts input').forEach(i => i.onchange = () => { i.checked ? eo.add(i.dataset.o) : eo.delete(i.dataset.o); renderE(); });
+$('#ctbl2').innerHTML = `<tr><th>Позиция</th><th class="n">Объём</th></tr>` + COMMON_Q.map(q => `<tr><td>${q[0]}</td><td class="n">${q[1]}</td></tr>`).join('');
 function renderE() {
-  const v = V.find(x => x.id === ev), r = calc(v, [...eo]);
-  es.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.id === ev));
-  let h = `<tr><th>Статья</th><th class="q">Объём × расценка</th><th class="n">млн ₸</th></tr><tr class="grp"><td colspan="3">Зал — ${v.name}</td></tr>`;
-  r.spec.forEach(s => h += `<tr><td>${s.n}</td><td class="q">${s.q}</td><td class="n">${fmtInt(s.m)}</td></tr>`);
-  h += `<tr><td><b>Итого зал</b></td><td class="q">${fmtInt(r.hall * 1000 / HALL)} тыс. ₸/м²</td><td class="n"><b>${fmtInt(r.hall)}</b></td></tr>`;
-  h += `<tr class="grp"><td colspan="3">Общее для всех вариантов</td></tr>`;
-  COMMON.forEach(s => h += `<tr><td>${s[0]}</td><td class="q"></td><td class="n">${fmtInt(s[1])}</td></tr>`);
-  OPTS.forEach(o => {
-    const val = o.skip === v.id ? 0 : o.calc(v, r.spec);
-    $('#on_' + o.id).textContent = o.skip === v.id ? 'н/п' : (val > 0 ? '+' : '') + val + ' млн';
-    if (eo.has(o.id) && o.skip !== v.id) h += `<tr><td>Опция: ${o.name}</td><td class="q"></td><td class="n">${val > 0 ? '+' : ''}${val}</td></tr>`;
-  });
-  h += `<tr><td>Непредвиденные расходы ${RES * 100} %</td><td class="q"></td><td class="n">${fmtInt(r.reserve)}</td></tr><tr class="tot"><td>ИТОГО</td><td class="q"></td><td class="n">${fmtInt(r.capex)}</td></tr>`;
-  $('#etbl').innerHTML = h;
-  $('#etot').textContent = bn(r.capex); $('#eusd').textContent = '≈ ' + usd(r.capex) + ' без НДС';
-  $('#em2').textContent = fmtInt(r.perM2) + ' тыс. ₸ на м² зала (с АБК, полем, сетями)';
+  const r = byId(ev); es.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.id === ev));
+  $('#qname').textContent = r.v.code + ' · ' + r.v.name;
+  $('#etbl').innerHTML = `<tr><th>Позиция</th><th class="n">Объём</th></tr>` + r.q.map(q => `<tr><td>${q[0]}</td><td class="n">${q[1]}</td></tr>`).join('');
 }
 renderE();
 
@@ -206,12 +189,6 @@ renderE();
 })();
 
 /* ---------- 07 gantt ---------- */
-const G = {
-  tent: [['Изыскания, проект, экспертиза', 0, 3, 1], ['Производство каркаса и мембраны', 2, 3], ['Фундаменты', 3, 1.5], ['Монтаж каркаса', 4.5, 1.5], ['Монтаж оболочки', 5.5, 1.5], ['Инженерные системы', 5.5, 2], ['Поле: основание + газон', 6.5, 1.5], ['АБК и благоустройство', 3.5, 4.5], ['Пусконаладка, ввод', 8, 1]],
-  box: [['Изыскания, проект, экспертиза', 0, 3, 1], ['Производство каркаса', 2, 4], ['Фундаменты', 3, 2.5], ['Монтаж каркаса и ферм', 5, 3], ['Кровля и стены PIR', 7, 2.5], ['Инженерные системы', 7.5, 3], ['Поле: основание + газон', 9.5, 1.5], ['АБК и благоустройство', 3.5, 7], ['Пусконаладка, ввод', 11, 1]],
-  hyb: [['Изыскания, проект, экспертиза', 0, 3, 1], ['Производство каркаса и мембраны', 2, 3.5], ['Фундаменты', 3, 2], ['Монтаж каркаса', 4.5, 2.5], ['Стены PIR + мембранная кровля', 6.5, 2], ['Инженерные системы', 6.5, 2.5], ['Поле: основание + газон', 8, 1.5], ['АБК и благоустройство', 3.5, 6], ['Пусконаладка, ввод', 9.5, 1]],
-  wood: [['Изыскания, проект, экспертиза', 0, 3.5, 1], ['Производство и доставка клеёных арок', 2, 5], ['Фундаменты', 3.5, 2.5], ['Монтаж арок', 7, 3], ['Кровля и фасады', 9, 3], ['Инженерные системы', 9, 3.5], ['Поле: основание + газон', 12, 1.5], ['АБК и благоустройство', 4, 9], ['Пусконаладка, ввод', 13.5, 1]]
-};
 let gv = BEST; const gs = $('#gseg');
 V.forEach(v => { const b = document.createElement('button'); b.type = 'button'; b.textContent = `${v.code} · ${v.name} — ${dec(v.months, v.months % 1 ? 1 : 0)} мес`; b.dataset.id = v.id; b.onclick = () => { gv = v.id; renderG(); }; gs.appendChild(b); });
 function renderG() {
@@ -225,16 +202,15 @@ renderG();
 /* ---------- 08 reco ---------- */
 (function () {
   const b = byId(BEST), c = byId(ALT), rest = R0.filter(r => r.v.id !== BEST && r.v.id !== ALT);
-  const saveVsCheap = R0.reduce((m, r) => r.capex < m.capex ? r : m);
-  $('#recoCard').innerHTML = `<h3>Основной: <span style="color:#ff5262">${b.v.code} · ${b.v.name}</span><span class="badge">лучший TCO</span></h3>
-  <p class="muted" style="margin:8px 0 16px">Для профессионального клуба в климате Актобе выгоднее капитальное здание: CAPEX ${bn(b.capex)}, но самая низкая стоимость владения за 25 лет — ${bn(b.tco25)}. Эксплуатация ${mn(b.opY)}/год против ${mn(saveVsCheap.opY)} у самого дешёвого в постройке «${saveVsCheap.v.name}» — разница в CAPEX окупается за ≈ ${dec((b.capex - saveVsCheap.capex) / (saveVsCheap.opY - b.opY), 0)} лет.</p>
+  $('#recoCard').innerHTML = `<h3>Основной: <span style="color:#ff5262">${b.v.code} · ${b.v.name}</span><span class="badge">капитальный</span></h3>
+  <p class="muted" style="margin:8px 0 16px">Для профессионального клуба в климате Актобе — капитальное здание: самые низкие теплопотери (${fmtInt(b.e.peakKW)} кВт при −31 °C против ${fmtInt(Math.max(...peaks))} кВт у мембранных решений), нет замены мембраны, на фермах легко подвесить сетки, табло и камеры. В свету над бровкой — ${dec(b.g.clear, 1)} м.</p>
   <h3>Альтернатива: <span style="color:#7dd3fc">${c.v.code} · ${c.v.name}</span></h3>
-  <p class="muted" style="margin:8px 0 16px">Если важны естественный свет, арочный образ и запуск на ${dec(b.v.months - c.v.months, 1)} мес раньше — ${bn(c.capex)}, владение 25 лет ${bn(c.tco25)}.</p>
-  <p class="muted">${rest.map(r => `<b style="color:#eef2f8">${r.v.code} · ${r.v.name}</b> — ${r.v.id === 'tent' ? 'быстрый и бюджетный старт' : 'флагманский объект для имиджа'} (${bn(r.capex)})`).join('. ')}.</p>`;
+  <p class="muted" style="margin:8px 0 16px">Если важны естественный свет, арочный образ и запуск на ${dec(b.v.months - c.v.months, 1)} мес раньше — стены PIR 8 м, мембранная кровля со световыми полосами.</p>
+  <p class="muted">${rest.map(r => `<b style="color:#eef2f8">${r.v.code} · ${r.v.name}</b> — ${r.v.id === 'tent' ? 'быстрый и лёгкий старт' : 'флагманский объект для имиджа'} (${m1(r.v.months)} мес)`).join('. ')}.</p>`;
 })();
 
 /* ---------- footer assumptions ---------- */
-$('#assump').innerHTML = `Курс ${RATE} ₸/$ (НБ РК на 10.11.2026 — 448,98 ₸). Стоимость — укрупнённая оценка без НДС, без стоимости земли и подключения к сетям сверх ТУ; точность ±15–20 % до проекта. Расценки: металл ${dec(PRICE.steel, 2)} млн ₸/т с монтажом, мембрана ${fmtInt(PRICE.membrane)} ₸/м², PIR ${fmtInt(PRICE.pirWall120)}–${fmtInt(PRICE.pirRoof200)} ₸/м², клеёный брус ${dec(PRICE.glulam, 2)} млн ₸/м³. Климат: −31 °C расчётная, ${CLIMATE.days} сут отопления, средняя ${dec(CLIMATE.tAvg, 1)} °C; в зале +${CLIMATE.tIn} °C. Тарифы: электроэнергия ${TARIFF.kwh} ₸/кВт·ч, газ ${TARIFF.gas} ₸/м³ — уточнить у поставщиков. Владение за 25 лет — без дисконтирования. Нагрузки и сечения подтверждаются расчётом в проекте.`;
+$('#assump').innerHTML = `Концептуальный проект. Климат: −31 °C расчётная, ${CLIMATE.days} сут отопления, средняя ${dec(CLIMATE.tAvg, 1)} °C; в зале +${CLIMATE.tIn} °C. Нагрузки — по СП РК EN 1991 для Актюбинской области. Тоннаж, сечения и фундаменты — укрупнённо, подтверждаются расчётом в рабочем проекте после изысканий.`;
 
 /* ---------- UI: buttons ---------- */
 $$('.vbtn[data-view]').forEach(b => b.onclick = () => ENGINE && ENGINE.view(b.dataset.view));

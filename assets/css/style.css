@@ -95,6 +95,7 @@ b{font-weight:800}
   .ch .lead{font-size:14.5px}
   .layers li{padding:7px 10px;font-size:13.5px}
   .num{margin-bottom:6px}
+  .svrow{gap:8px}.svrow div{min-width:0;flex:1;padding:8px 10px}.svrow b{font-size:15px}
   .cue{display:none}
 }
 
